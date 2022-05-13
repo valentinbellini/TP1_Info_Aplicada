@@ -58,12 +58,57 @@ int main(){
 		printf("Se realiza una nueva simulacion.\n");
 		E1 = evento_random_entrada(E1,datos_ingreso->n_eventos);
 		num_simulacion++;
+
+		//Logica
+		//Aca estuve viendo que quizas tendriamos que armar otra estrucutura, union o algo para guardar
+		//los estados de las salidas y despues mostrar las acciones segun cada caso.
+		for(i = 0;i<datos_ingreso->n_eventos;i++){
+			//printf("%06d\t %06d\t 0\t\n",E1->reset,E1->boton);
+			if(E1->t_end[i]){
+				fin = true;
+				reposo = true;
+			}
+
+			else{
+				if(E1->reset[i]){//Estado de reposo hasta que se pareta Boton
+					fin = true;
+					E1->boton[i] = true;
+					ENA1 = false;
+					ENA2 = false;
+					reposo = true;
+				}
+
+				else{
+					if(E1->boton[i] && fin && reposo){
+						fin = false;
+						reposo = false; //Sale del estado de reposo
+						ENA1 = true; //Como es la 1ra vez, empieza a correr el tiempo de J1
+						ENA2 = false;
+					}
+
+					else{
+						if(E1->boton[i] && ENA1){
+							ENA1 = false;
+							ENA2 = true;
+						}
+						else{
+							if(E1->boton[i] && ENA2){
+								ENA1 = true;
+								ENA2 = false;
+							}
+						}
+					}
+				}
+			}
+		}
+		//
+		
 		printf("\n ///////////////////////////////////////////////////////////// \n");
 
 		//Tendriamos que armar todo en una funcio Mostrar_salida();
 		printf("Resultados de simulacion de partida %d:\n",num_simulacion);
 		printf("---------------------------------------\n");
-		printf("Estado RESET\t Estado Boton\t Estado Salida ENA1\t Estado Salida ENA2\t Para el estado actual el evento es\n");
+		printf("Estado RESET\t Estado Boton\t Estado Salida ENA1\t Estado Salida ENA2\t Para el estado actual el evento es\t Accion\n");
 		for(int i = 0;i<datos_ingreso->n_eventos;i++){
 			//printf("%06d\t %06d\t 0\t\n",E1->reset,E1->boton);
 			if(E1->reset[i])
