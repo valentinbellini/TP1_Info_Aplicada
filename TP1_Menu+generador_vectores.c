@@ -40,7 +40,8 @@ entradas *evento_random_entrada(entradas *E1, int cant_eventos);
 
 int main(){
 	Datos *datos_ingreso;
-	int num_simulacion = 0;
+	int num_simulacion = 0,i;
+	bool ENA1 = true,ENA2 = true,fin = true,estado = false,reposo = false;
 	entradas *E1 = (entradas*) malloc(sizeof(entradas));
 	if(E1 == NULL){
 		printf("Error!! No se pudo reservar memoria para la variable 'E1'");
@@ -60,8 +61,6 @@ int main(){
 		num_simulacion++;
 
 		//Logica
-		//Aca estuve viendo que quizas tendriamos que armar otra estrucutura, union o algo para guardar
-		//los estados de las salidas y despues mostrar las acciones segun cada caso.
 		for(i = 0;i<datos_ingreso->n_eventos;i++){
 			//printf("%06d\t %06d\t 0\t\n",E1->reset,E1->boton);
 			if(E1->t_end[i]){
@@ -101,25 +100,30 @@ int main(){
 				}
 			}
 		}
+
+
 		//
-		
 		printf("\n ///////////////////////////////////////////////////////////// \n");
 
 		//Tendriamos que armar todo en una funcio Mostrar_salida();
 		printf("Resultados de simulacion de partida %d:\n",num_simulacion);
 		printf("---------------------------------------\n");
 		printf("Estado RESET\t Estado Boton\t Estado Salida ENA1\t Estado Salida ENA2\t Para el estado actual el evento es\t Accion\n");
-		for(int i = 0;i<datos_ingreso->n_eventos;i++){
+		for(i = 0;i<datos_ingreso->n_eventos;i++){
 			//printf("%06d\t %06d\t 0\t\n",E1->reset,E1->boton);
 			if(E1->reset[i])
 				printf("\t1\t");
 			else
 				printf("\t0\t");
 
-			if(E1->boton[i])
+			if(E1->boton[i]){
 				printf("\t1\t");
-			else
+			}
+
+			else{
 				printf("\t0\t");
+			}
+
 			printf("\n");
 		}
 
@@ -208,3 +212,4 @@ entradas *evento_random_entrada(entradas *E1, int cant_eventos){
 	}
 	return E1;
 }
+
