@@ -4,8 +4,6 @@
  *  Created on: 12 may. 2022
  *      Author: gusty
  */
-
-
 /*
  *AVANCES: Integre lo que estuvo haciendo Vale y ya podemos generar los vectores aleatorios sin dramas
  *segun la cantidad que diga el usuario. Lo que tendriamos que hacer ahora es empezar a armar el arbol de if
@@ -66,14 +64,12 @@ int main(){
 
 		//Logica
 		for(i = 0;i<datos_ingreso->n_eventos;i++){
-			/*bool inicio;
-			if(E1->reset[i]){
-				fin = true;
+			if(E1->reset[i] && !E1->t_end[i]){
+				fin = false;
 				E1->boton[i] = true;
 				E1->ENA1[i] = false;
 				E1->ENA2[i] = false;
 				reposo = true;
-				inicio = false;
 			}
 
 			else{
@@ -81,79 +77,47 @@ int main(){
 					fin = true;
 					E1->ENA1[i] = false;
 					E1->ENA2[i] = false;
-					inicio = false;
+					reposo = false;
 				}
 
 				else{
-					if(!E1->boton[i] && fin && reposo){
-						fin = false;
-						reposo = false; //Sale del estado de reposo
-						E1->ENA1[i] = true; //Como es la 1ra vez, empieza a correr el tiempo de J1
-						E1->ENA2[i] = false;
-						inicio = true;
+					if(i && reposo){
+						if(!E1->boton[i] && !E1->ENA1[i-1] && !E1->ENA2[i-1] && !fin){
+							E1->ENA1[i] = true;
+							E1->ENA2[i] = false;
+							fin = false;
+						}
+						else{
+							if(!E1->boton[i] && E1->ENA1[i-1]){
+								E1->ENA2[i] = true;
+								E1->ENA1[i] = false;
+							}
+							else{
+								if(!E1->boton[i] && E1->ENA2[i-1]){
+									E1->ENA1[i] = true;
+									E1->ENA2[i] = false;
+								}
+
+								else{
+									E1->ENA1[i] = E1->ENA1[i-1];
+									E1->ENA2[i] = E1->ENA2[i-1];
+								}
+							}
+						}
 					}
 
 					else{
-						if(!E1->boton[i] && E1->ENA1[i-1] && inicio){
-							E1->ENA1[i] = false;
-							E1->ENA2[i] = true;
+						if(!E1->boton[i] && (i == 0)){
+							E1->ENA1[i] = true;
+							E1->ENA2[i] = false;
 						}
 						else{
-							if(!E1->boton[i] && E1->ENA2[i-1] && inicio){
-								E1->ENA1[i] = true;
-								E1->ENA2[i] = false;
-							}
-							else{
-								E1->ENA1[i] = E1->ENA1[i-1];
-								E1->ENA2[i] = E1->ENA2[i-1];
-								fin = false;
-								reposo = false;
-							}
-						}
-					}
-				}
-			}*/
-			if(E1->reset[i]){
-				fin = true;
-				E1->boton[i] = true;
-				E1->ENA1[i] = false;
-				E1->ENA2[i] = false;
-				//reposo = true;
-				//inicio = false;
-			}
-
-			else{
-				if(!i){
-					if(!E1->boton[i] && !E1->ENA1[i-1] && !E1->ENA2[i-1]){
-						E1->ENA1[i] = true;
-						E1->ENA2[i] = false;
-					}
-					else{
-						if(!E1->boton[i] && E1->ENA1[i-1]){
-							E1->ENA2[i] = true;
 							E1->ENA1[i] = false;
-						}
-						else{
-							if(!E1->boton[i] && E1->ENA2[i-1]){
-								E1->ENA1[i] = true;
-								E1->ENA2[i] = false;
-							}
-							else{
-								E1->ENA1[i] = E1->ENA1[i-1];
-								E1->ENA2[i] = E1->ENA2[i-1];
-								fin = false;
-								reposo = false;
-							}
+							E1->ENA2[i] = false;
 						}
 					}
 				}
-				else{
-					E1->ENA1[i] = true;
-					E1->ENA2[i] = false;
-				}
 			}
-
-
 		}
 
 
@@ -167,7 +131,7 @@ int main(){
 		for(i = 0;i<datos_ingreso->n_eventos;i++){
 			printf("%d\t",E1->reset[i]);
 			printf("%d\t",E1->boton[i]);
-			//printf("%d\t",E1->t_end[i]);
+			printf("%d\t",E1->t_end[i]);
 			printf("%d\t",E1->ENA1[i]);
 			printf("%d\t",E1->ENA2[i]);
 
@@ -257,7 +221,7 @@ entradas_salidas *evento_random_entrada(entradas_salidas *E1, int cant_eventos){
 	E1->ENA2 = (bool*) calloc(cant_eventos,sizeof(bool*));
 
 	for (int i = 0; i < cant_eventos; i++){
-		E1->boton[i] = bit_random(0.99);
+		E1->boton[i] = bit_random(1);
 		E1->reset[i] = bit_random(0.5);
 		E1->t_end[i] = bit_random(0.5);
 	}
