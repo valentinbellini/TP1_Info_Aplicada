@@ -4,6 +4,8 @@
  *  Created on: 12 may. 2022
  *      Author: gusty
  */
+
+
 /*
  *AVANCES: Integre lo que estuvo haciendo Vale y ya podemos generar los vectores aleatorios sin dramas
  *segun la cantidad que diga el usuario. Lo que tendriamos que hacer ahora es empezar a armar el arbol de if
@@ -30,11 +32,13 @@ typedef struct po {
 	bool *boton;
 	bool *reset;
 	bool *t_end;
-}entradas;
+	bool *ENA1[i];
+	bool *ENA2[i];
+}entradas_salidas;
 
 Datos* Menu_inicio();
 bool bit_random();
-entradas *evento_random_entrada(entradas *E1, int cant_eventos);
+entradas_salidas *evento_random_entrada(entradas_salidas *E1, int cant_eventos);
 //void Mostrar_salida();
 
 
@@ -42,7 +46,7 @@ int main(){
 	Datos *datos_ingreso;
 	int num_simulacion = 0,i;
 	bool ENA1 = true,ENA2 = true,fin = true,estado = false,reposo = false;
-	entradas *E1 = (entradas*) malloc(sizeof(entradas));
+	entradas_salidas *E1 = (entradas_salidas*) malloc(sizeof(entradas_salidas));
 	if(E1 == NULL){
 		printf("Error!! No se pudo reservar memoria para la variable 'E1'");
 		return -1;
@@ -72,8 +76,8 @@ int main(){
 				if(E1->reset[i]){//Estado de reposo hasta que se pareta Boton
 					fin = true;
 					E1->boton[i] = true;
-					ENA1 = false;
-					ENA2 = false;
+					E1->ENA1[i] = false;
+					E1->ENA2[i] = false;
 					reposo = true;
 				}
 
@@ -81,19 +85,19 @@ int main(){
 					if(E1->boton[i] && fin && reposo){
 						fin = false;
 						reposo = false; //Sale del estado de reposo
-						ENA1 = true; //Como es la 1ra vez, empieza a correr el tiempo de J1
-						ENA2 = false;
+						E1->ENA1[i] = true; //Como es la 1ra vez, empieza a correr el tiempo de J1
+						E1->ENA2[i] = false;
 					}
 
 					else{
 						if(E1->boton[i] && ENA1){
-							ENA1 = false;
-							ENA2 = true;
+							E1->ENA1[i] = false;
+							E1->ENA2[i] = true;
 						}
 						else{
 							if(E1->boton[i] && ENA2){
-								ENA1 = true;
-								ENA2 = false;
+								E1->ENA1[i] = true;
+								E1->ENA2[i] = false;
 							}
 						}
 					}
@@ -106,7 +110,7 @@ int main(){
 		printf("\n ///////////////////////////////////////////////////////////// \n");
 
 		//Tendriamos que armar todo en una funcio Mostrar_salida();
-		printf("Resultados de simulacion de partida %d:\n",num_simulacion);
+		printf("Resultados de simulacion %d:\n",num_simulacion);
 		printf("---------------------------------------\n");
 		printf("Estado RESET\t Estado Boton\t Estado Salida ENA1\t Estado Salida ENA2\t Para el estado actual el evento es\t Accion\n");
 		for(i = 0;i<datos_ingreso->n_eventos;i++){
@@ -199,12 +203,15 @@ bool bit_random (){
 	return bit;
 }
 
-entradas *evento_random_entrada(entradas *E1, int cant_eventos){
+entradas_salidas *evento_random_entrada(entradas_salidas *E1, int cant_eventos){
 	// Generar un vector dinámico de valores booleanos
 	// para cada una de las variables de entrada.
 	E1->boton = (bool*) malloc(cant_eventos*sizeof(bool*));
 	E1->reset = (bool*) malloc(cant_eventos*sizeof(bool*));
 	E1->t_end = (bool*) malloc(cant_eventos*sizeof(bool*));
+	E1->ENA1[i] = (bool*) malloc(cant_eventos*sizeof(bool*));
+	E1->ENA2[i] = (bool*) malloc(cant_eventos*sizeof(bool*));
+
 	for (int i = 0; i < cant_eventos; i++){
 		E1->boton[i] = bit_random();
 		E1->reset[i] = bit_random();
@@ -212,4 +219,5 @@ entradas *evento_random_entrada(entradas *E1, int cant_eventos){
 	}
 	return E1;
 }
+
 
