@@ -17,17 +17,28 @@
 #include <stdbool.h>
 
 
-typedef struct po {
+typedef struct entradas_t {
 	bool *boton;
 	bool *reset;
 	bool *t_end;
 }entradas;
 
-bool bit_random (){
+typedef struct salidas_t {
+	unsigned int ENA1 : 1;
+	unsigned int ENA2 : 1;
+	unsigned int fin : 1;
+}salidas;
+
+bool bit_random (double p){
 	int valor_random = rand() %50;
 	bool bit;
-	(valor_random > 25) ? (bit = true) : (bit = false);
+	(valor_random > 20/p) ? (bit = true) : (bit = false);
 	return bit;
+}
+
+void delay(int s){
+	double timeDelay = (double) s + clock()/CLOCKS_PER_SEC;
+	while(timeDelay > clock()/CLOCKS_PER_SEC){}
 }
 
 void evento_random_entrada(entradas *E1, int cant_eventos){
@@ -36,20 +47,53 @@ void evento_random_entrada(entradas *E1, int cant_eventos){
 	E1->boton = (bool*) malloc(cant_eventos*sizeof(bool*));
 	E1->reset = (bool*) malloc(cant_eventos*sizeof(bool*));
 	E1->t_end = (bool*) malloc(cant_eventos*sizeof(bool*));
+	if(E1->boton == NULL || E1->reset == NULL || E1->t_end == NULL){
+		printf("No se ha podido reservar memoria para alguna de las entradas\n");
+	}
 	for (int i = 0; i < cant_eventos; i++){
-		E1->boton[i] = bit_random();
-		E1->reset[i] = bit_random();
-		E1->t_end[i] = bit_random();
+		E1->boton[i] = bit_random(1);
+		E1->reset[i] = bit_random(0.7);
+		E1->t_end[i] = bit_random(0.5);
 	}
 }
 
+void imprimir_entradas_aleatorias (entradas *E1,int cant_eventos){
+	printf("Boton = [ ");
+		for(int i = 0; i < cant_eventos; i++){
+			printf("%d ",E1->boton[i]);
+		}
+		printf("]\n");
+
+		printf("Reset = [ ");
+		for(int i = 0; i < cant_eventos; i++){
+			printf("%d ",E1->reset[i]);
+		}
+		printf("]\n");
+
+		printf("t_end = [ ");
+		for(int i = 0; i < cant_eventos; i++){
+			printf("%d ",E1->t_end[i]);
+		}
+		printf("]\n");
+}
+
+void liberar_memoria_entradas(entradas *E1, int cant_eventos){
+	free(E1->boton);
+	free(E1->reset);
+	free(E1->t_end);
+	free(E1);
+}
+
+
 int main(void) {
 	srand(time(NULL));
-	int cant_eventos = 5;
+	int cant_eventos = 0;
+	printf("Ingrese cantidad de eventos a generar: ");
+	scanf("%d",&cant_eventos);
 	entradas *E1 = (entradas*) malloc(sizeof(entradas));
 	evento_random_entrada(E1,cant_eventos);
-
-
+	imprimir_entradas_aleatorias(E1,cant_eventos);
+	liberar_memoria_entradas(E1,cant_eventos);
 
 	return EXIT_SUCCESS;
 }
