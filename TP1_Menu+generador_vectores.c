@@ -37,7 +37,7 @@ typedef struct po {
 }entradas_salidas;
 
 Datos* Menu_inicio();
-bool bit_random();
+bool bit_random(double p);
 entradas_salidas *evento_random_entrada(entradas_salidas *E1, int cant_eventos);
 //void Mostrar_salida();
 
@@ -115,7 +115,6 @@ int main(){
 		printf("---------------------------------------\n");
 		printf("RESET\t BOTON\t Se termino el tiempo?\t ENA1\t ENA2\t Para el estado actual el evento es\t Accion\n");
 		for(i = 0;i<datos_ingreso->n_eventos;i++){
-			//printf("%06d\t %06d\t 0\t\n",E1->reset,E1->boton);
 			printf("%d\t",E1->reset[i]);
 			printf("%d\t",E1->boton[i]);
 			printf("%d\t",E1->t_end[i]);
@@ -182,11 +181,11 @@ Datos* Menu_inicio(){
 
 //void Mostrar_salida(){}
 
-bool bit_random (){
+bool bit_random (double p){
 	int valor_random = rand() % MAX + MIN;
 	bool bit;
 	printf("Valor aleatorio: %d  ",valor_random);
-	if(valor_random > 25){
+	if(valor_random > 20/p){
 		bit = true;
 		printf("TRUE\n");
 	}
@@ -194,6 +193,7 @@ bool bit_random (){
 		bit = false;
 		printf("FALSE\n");
 	}
+
 	return bit;
 }
 
@@ -207,9 +207,9 @@ entradas_salidas *evento_random_entrada(entradas_salidas *E1, int cant_eventos){
 	E1->ENA2 = (bool*) calloc(cant_eventos,sizeof(bool*));
 
 	for (int i = 0; i < cant_eventos; i++){
-		E1->boton[i] = bit_random();
-		E1->reset[i] = bit_random();
-		E1->t_end[i] = bit_random();
+		E1->boton[i] = bit_random(1);
+		E1->reset[i] = bit_random(0.5);
+		E1->t_end[i] = bit_random(0.5);
 	}
 	return E1;
 }
