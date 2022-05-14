@@ -121,21 +121,19 @@ int main(){
 				}
 			}
 		}
-
-
 		//
 		printf("\n ///////////////////////////////////////////////////////////// \n");
 
 		//Tendriamos que armar todo en una funcio Mostrar_salida();
 		printf("Resultados de simulacion %d:\n",num_simulacion);
 		printf("---------------------------------------\n");
-		printf("RESET\t BOTON\t Se termino el tiempo?\t ENA1\t ENA2\t Para el estado actual el evento es\t Accion\n");
+		printf("RESET\t BOTON\ T_END \t ENA1\t ENA2\t Para el estado actual el evento es\t Accion\n");
 		for(i = 0;i<datos_ingreso->n_eventos;i++){
 			printf("%d\t",E1->reset[i]);
 			printf("%d\t",E1->boton[i]);
 			printf("%d\t",E1->t_end[i]);
-			printf("%d\t",E1->ENA1[i]);
-			printf("%d\t",E1->ENA2[i]);
+			printf(" %d\t",E1->ENA1[i]);
+			printf(" %d\t",E1->ENA2[i]);
 
 			printf("\n");
 		}
