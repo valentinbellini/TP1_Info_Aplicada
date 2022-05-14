@@ -66,20 +66,22 @@ int main(){
 
 		//Logica
 		for(i = 0;i<datos_ingreso->n_eventos;i++){
-			//printf("%06d\t %06d\t 0\t\n",E1->reset,E1->boton);
+			/*bool inicio;
 			if(E1->reset[i]){
 				fin = true;
 				E1->boton[i] = true;
 				E1->ENA1[i] = false;
 				E1->ENA2[i] = false;
 				reposo = true;
-
+				inicio = false;
 			}
 
 			else{
 				if(E1->t_end[i]){//Estado de reposo hasta que se pareta Boton
 					fin = true;
-					reposo = true;
+					E1->ENA1[i] = false;
+					E1->ENA2[i] = false;
+					inicio = false;
 				}
 
 				else{
@@ -88,22 +90,70 @@ int main(){
 						reposo = false; //Sale del estado de reposo
 						E1->ENA1[i] = true; //Como es la 1ra vez, empieza a correr el tiempo de J1
 						E1->ENA2[i] = false;
+						inicio = true;
 					}
 
 					else{
-						if(!E1->boton[i] && E1->ENA1[i]){
+						if(!E1->boton[i] && E1->ENA1[i-1] && inicio){
 							E1->ENA1[i] = false;
 							E1->ENA2[i] = true;
 						}
 						else{
-							if(!E1->boton[i] && E1->ENA2[i]){
+							if(!E1->boton[i] && E1->ENA2[i-1] && inicio){
 								E1->ENA1[i] = true;
 								E1->ENA2[i] = false;
+							}
+							else{
+								E1->ENA1[i] = E1->ENA1[i-1];
+								E1->ENA2[i] = E1->ENA2[i-1];
+								fin = false;
+								reposo = false;
 							}
 						}
 					}
 				}
+			}*/
+			if(E1->reset[i]){
+				fin = true;
+				E1->boton[i] = true;
+				E1->ENA1[i] = false;
+				E1->ENA2[i] = false;
+				//reposo = true;
+				//inicio = false;
 			}
+
+			else{
+				if(!i){
+					if(!E1->boton[i] && !E1->ENA1[i-1] && !E1->ENA2[i-1]){
+						E1->ENA1[i] = true;
+						E1->ENA2[i] = false;
+					}
+					else{
+						if(!E1->boton[i] && E1->ENA1[i-1]){
+							E1->ENA2[i] = true;
+							E1->ENA1[i] = false;
+						}
+						else{
+							if(!E1->boton[i] && E1->ENA2[i-1]){
+								E1->ENA1[i] = true;
+								E1->ENA2[i] = false;
+							}
+							else{
+								E1->ENA1[i] = E1->ENA1[i-1];
+								E1->ENA2[i] = E1->ENA2[i-1];
+								fin = false;
+								reposo = false;
+							}
+						}
+					}
+				}
+				else{
+					E1->ENA1[i] = true;
+					E1->ENA2[i] = false;
+				}
+			}
+
+
 		}
 
 
@@ -117,7 +167,7 @@ int main(){
 		for(i = 0;i<datos_ingreso->n_eventos;i++){
 			printf("%d\t",E1->reset[i]);
 			printf("%d\t",E1->boton[i]);
-			printf("%d\t",E1->t_end[i]);
+			//printf("%d\t",E1->t_end[i]);
 			printf("%d\t",E1->ENA1[i]);
 			printf("%d\t",E1->ENA2[i]);
 
@@ -200,14 +250,14 @@ bool bit_random (double p){
 entradas_salidas *evento_random_entrada(entradas_salidas *E1, int cant_eventos){
 	// Generar un vector dinámico de valores booleanos
 	// para cada una de las variables de entrada.
-	E1->boton = (bool*) malloc(cant_eventos*sizeof(bool*));
-	E1->reset = (bool*) malloc(cant_eventos*sizeof(bool*));
-	E1->t_end = (bool*) malloc(cant_eventos*sizeof(bool*));
+	E1->boton = (bool*) calloc(cant_eventos,sizeof(bool*));
+	E1->reset = (bool*) calloc(cant_eventos,sizeof(bool*));
+	E1->t_end = (bool*) calloc(cant_eventos,sizeof(bool*));
 	E1->ENA1 = (bool*) calloc(cant_eventos,sizeof(bool*));
 	E1->ENA2 = (bool*) calloc(cant_eventos,sizeof(bool*));
 
 	for (int i = 0; i < cant_eventos; i++){
-		E1->boton[i] = bit_random(1);
+		E1->boton[i] = bit_random(0.99);
 		E1->reset[i] = bit_random(0.5);
 		E1->t_end[i] = bit_random(0.5);
 	}
