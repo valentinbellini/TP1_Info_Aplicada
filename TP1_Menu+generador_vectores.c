@@ -32,8 +32,8 @@ typedef struct po {
 	bool *boton;
 	bool *reset;
 	bool *t_end;
-	bool *ENA1[i];
-	bool *ENA2[i];
+	bool *ENA1;
+	bool *ENA2;
 }entradas_salidas;
 
 Datos* Menu_inicio();
@@ -45,7 +45,7 @@ entradas_salidas *evento_random_entrada(entradas_salidas *E1, int cant_eventos);
 int main(){
 	Datos *datos_ingreso;
 	int num_simulacion = 0,i;
-	bool ENA1 = true,ENA2 = true,fin = true,estado = false,reposo = false;
+	bool fin = true,reposo = false;
 	entradas_salidas *E1 = (entradas_salidas*) malloc(sizeof(entradas_salidas));
 	if(E1 == NULL){
 		printf("Error!! No se pudo reservar memoria para la variable 'E1'");
@@ -67,22 +67,23 @@ int main(){
 		//Logica
 		for(i = 0;i<datos_ingreso->n_eventos;i++){
 			//printf("%06d\t %06d\t 0\t\n",E1->reset,E1->boton);
-			if(E1->t_end[i]){
+			if(E1->reset[i]){
 				fin = true;
+				E1->boton[i] = true;
+				E1->ENA1[i] = false;
+				E1->ENA2[i] = false;
 				reposo = true;
+
 			}
 
 			else{
-				if(E1->reset[i]){//Estado de reposo hasta que se pareta Boton
+				if(E1->t_end[i]){//Estado de reposo hasta que se pareta Boton
 					fin = true;
-					E1->boton[i] = true;
-					E1->ENA1[i] = false;
-					E1->ENA2[i] = false;
 					reposo = true;
 				}
 
 				else{
-					if(E1->boton[i] && fin && reposo){
+					if(!E1->boton[i] && fin && reposo){
 						fin = false;
 						reposo = false; //Sale del estado de reposo
 						E1->ENA1[i] = true; //Como es la 1ra vez, empieza a correr el tiempo de J1
@@ -90,12 +91,12 @@ int main(){
 					}
 
 					else{
-						if(E1->boton[i] && ENA1){
+						if(!E1->boton[i] && E1->ENA1[i]){
 							E1->ENA1[i] = false;
 							E1->ENA2[i] = true;
 						}
 						else{
-							if(E1->boton[i] && ENA2){
+							if(!E1->boton[i] && E1->ENA2[i]){
 								E1->ENA1[i] = true;
 								E1->ENA2[i] = false;
 							}
@@ -112,21 +113,14 @@ int main(){
 		//Tendriamos que armar todo en una funcio Mostrar_salida();
 		printf("Resultados de simulacion %d:\n",num_simulacion);
 		printf("---------------------------------------\n");
-		printf("Estado RESET\t Estado Boton\t Estado Salida ENA1\t Estado Salida ENA2\t Para el estado actual el evento es\t Accion\n");
+		printf("RESET\t BOTON\t Se termino el tiempo?\t ENA1\t ENA2\t Para el estado actual el evento es\t Accion\n");
 		for(i = 0;i<datos_ingreso->n_eventos;i++){
 			//printf("%06d\t %06d\t 0\t\n",E1->reset,E1->boton);
-			if(E1->reset[i])
-				printf("\t1\t");
-			else
-				printf("\t0\t");
-
-			if(E1->boton[i]){
-				printf("\t1\t");
-			}
-
-			else{
-				printf("\t0\t");
-			}
+			printf("%d\t",E1->reset[i]);
+			printf("%d\t",E1->boton[i]);
+			printf("%d\t",E1->t_end[i]);
+			printf("%d\t",E1->ENA1[i]);
+			printf("%d\t",E1->ENA2[i]);
 
 			printf("\n");
 		}
@@ -144,7 +138,7 @@ Datos* Menu_inicio(){
 	Datos *datos_ingreso = (Datos*) malloc(sizeof(Datos));
 	if(datos_ingreso == NULL){
 		printf("Error!! No se pudo reservar memoria para la variable 'datos_ingreso'");
-		return -1;
+		return NULL;
 	}
 	char opcion;
 	datos_ingreso->n_eventos = 0;
@@ -209,8 +203,8 @@ entradas_salidas *evento_random_entrada(entradas_salidas *E1, int cant_eventos){
 	E1->boton = (bool*) malloc(cant_eventos*sizeof(bool*));
 	E1->reset = (bool*) malloc(cant_eventos*sizeof(bool*));
 	E1->t_end = (bool*) malloc(cant_eventos*sizeof(bool*));
-	E1->ENA1[i] = (bool*) malloc(cant_eventos*sizeof(bool*));
-	E1->ENA2[i] = (bool*) malloc(cant_eventos*sizeof(bool*));
+	E1->ENA1 = (bool*) calloc(cant_eventos,sizeof(bool*));
+	E1->ENA2 = (bool*) calloc(cant_eventos,sizeof(bool*));
 
 	for (int i = 0; i < cant_eventos; i++){
 		E1->boton[i] = bit_random();
