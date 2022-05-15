@@ -4,11 +4,6 @@
  *  Created on: 12 may. 2022
  *      Author: gusty
  */
-/*
- *AVANCES: Integre lo que estuvo haciendo Vale y ya podemos generar los vectores aleatorios sin dramas
- *segun la cantidad que diga el usuario. Lo que tendriamos que hacer ahora es empezar a armar el arbol de if
- *para que decida que hacer en cada caso según las entradas que se generaron. Tambien fui armando como quedaría
- *la salida una vez que se procesan los datos.*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,12 +12,14 @@
 #include <time.h>
 #include <stdbool.h>
 
+//Definicion de parametros
 #define EVENT_MAX 100
 #define MAX 50
 #define MIN 1
 #define ANCHO_TEXTO -10
 #define LONG_MAX 15
 
+//Definicion de macros
 #define PULSADOR(a) ((a > 0)?"PULSADO":"NO PULSADO")
 #define TIEMPO(b) ((b > 0)?"SI":"NO")
 
@@ -62,15 +59,16 @@ char* Eventos[] = {"Imposible",
 Datos_inicio *Menu_inicio();
 bool bit_random(double p);
 entradas_salidas *evento_random_entrada(entradas_salidas *E1, int cant_eventos);
-void Mostrar_salida();
+void Mostrar_salida(entradas_salidas *E1,datos Nombres[],int cant_eventos);
+void liberar_memoria(entradas_salidas *E1);
 
 int main(){
 	Datos_inicio *datos_ingreso;
 	int num_simulacion = 0,i;
 	control var_control;
+	entradas_salidas datos_E1;
 	var_control.fin = 1;
 	var_control.reposo = 0;
-	entradas_salidas datos_E1;
 
 	srand(time(NULL));
 	printf("----------------------- Bienvenido!! -----------------------\n");
@@ -88,7 +86,6 @@ int main(){
 		E1 = evento_random_entrada(&datos_E1,datos_ingreso->n_eventos);
 		num_simulacion++;
 
-		//Logica
 		for(i = 0;i<datos_ingreso->n_eventos;i++){
 			if(E1->reset[i] && !E1->t_end[i]){
 				var_control.fin = 0;
@@ -101,7 +98,7 @@ int main(){
 			}
 
 			else{
-				if(E1->t_end[i]){//Estado de reposo hasta que se pareta Boton
+				if(E1->t_end[i]){
 					var_control.fin = 1;
 					E1->ENA1[i] = false;
 					E1->ENA2[i] = false;
@@ -165,36 +162,14 @@ int main(){
 				}
 			}
 		}
-
 		printf("\n////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////\n");
 		printf("Resultados de simulacion %d:\n",num_simulacion);
-		printf("---------------------------------------------------------------------------------------------------------------------------------\n");
-		printf("   RESET\t    BOTON\t Se termino el tiempo?\t ENA1\tENA2\t Para el estado actual el evento \t Accion\n");
-		printf("---------------------------------------------------------------------------------------------------------------------------------\n");
-		for(i = 0;i<datos_ingreso->n_eventos;i++){
-			printf("%*s    |\t",ANCHO_TEXTO,PULSADOR(E1->reset[i]));
-			printf("%*s    |\t",ANCHO_TEXTO,PULSADOR(!E1->boton[i]));
-			printf("%*s\t\t|",-ANCHO_TEXTO+2,TIEMPO(E1->t_end[i]));
-			printf("%*d  |",3,E1->ENA1[i]);
-			printf("%*d  |",3,E1->ENA2[i]);
-			printf("\t%*s \t\t|",-ANCHO_TEXTO*2,Nombres[i].evento);
-			printf("\t%*s \t\t",ANCHO_TEXTO*2,Nombres[i].accion);
-
-			printf("\n");
-		}
-		printf("---------------------------------------------------------------------------------------------------------------------------------\n");
-
+		Mostrar_salida(E1,Nombres,datos_ingreso->n_eventos);
 		datos_ingreso = Menu_inicio();
-		free(E1->ENA1);
-		free(E1->ENA2);
-		free(E1->boton);
-		free(E1->reset);
-		free(E1->t_end);
-		free(E1);
+		liberar_memoria(E1);
 	}
 
 	printf("Salio del programa.\n");
-	//getch();
 	return 0;
 }
 
@@ -256,11 +231,6 @@ bool bit_random (double p){
 }
 
 entradas_salidas *evento_random_entrada(entradas_salidas *E1, int cant_eventos){
-//	free(E1->ENA1);
-//	free(E1->ENA2);
-//	free(E1->boton);
-//	free(E1->reset);
-//	free(E1->t_end);
 	E1->boton = (bool*) malloc(cant_eventos*sizeof(bool));
 	E1->reset = (bool*) malloc(cant_eventos*sizeof(bool));
 	E1->t_end = (bool*) malloc(cant_eventos*sizeof(bool));
@@ -273,4 +243,31 @@ entradas_salidas *evento_random_entrada(entradas_salidas *E1, int cant_eventos){
 		E1->t_end[i] = bit_random(0.5);
 	}
 	return E1;
+}
+
+void Mostrar_salida(entradas_salidas *E1,datos Nombres[],int cant_eventos){
+	int i;
+	printf("---------------------------------------------------------------------------------------------------------------------------------\n");
+	printf("   RESET\t    BOTON\t Se termino el tiempo?\t ENA1\tENA2\t Para el estado actual el evento \t Accion\n");
+	printf("---------------------------------------------------------------------------------------------------------------------------------\n");
+	for(i = 0;i<cant_eventos;i++){
+		printf("%*s    |\t",ANCHO_TEXTO,PULSADOR(E1->reset[i]));
+		printf("%*s    |\t",ANCHO_TEXTO,PULSADOR(!E1->boton[i]));
+		printf("%*s\t\t|",-ANCHO_TEXTO+2,TIEMPO(E1->t_end[i]));
+		printf("%*d  |",3,E1->ENA1[i]);
+		printf("%*d  |",3,E1->ENA2[i]);
+		printf("\t%*s \t\t|",-ANCHO_TEXTO*2,Nombres[i].evento);
+		printf("\t%*s \t\t",ANCHO_TEXTO*2,Nombres[i].accion);
+		printf("\n");
+	}
+	printf("---------------------------------------------------------------------------------------------------------------------------------\n");
+}
+
+void liberar_memoria(entradas_salidas *E1){
+	free(E1->ENA1);
+	free(E1->ENA2);
+	free(E1->boton);
+	free(E1->reset);
+	free(E1->t_end);
+	free(E1);
 }
