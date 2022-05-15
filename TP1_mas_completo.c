@@ -1,14 +1,3 @@
-/*
- * TP1.c
- *
- *  Created on: 12 may. 2022
- *      Author: gusty
- */
-/*
- *AVANCES: Integre lo que estuvo haciendo Vale y ya podemos generar los vectores aleatorios sin dramas
- *segun la cantidad que diga el usuario. Lo que tendriamos que hacer ahora es empezar a armar el arbol de if
- *para que decida que hacer en cada caso según las entradas que se generaron. Tambien fui armando como quedaría
- *la salida una vez que se procesan los datos.*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,7 +18,7 @@
 typedef struct{
 	char opcion;
 	int n_eventos;
-}Datos;
+}Datos_Inicio;
 
 typedef struct{
 	bool *boton;
@@ -59,25 +48,19 @@ char* Eventos[] = {"Imposible",
 				   "Relevante",
 				   "No modifica"};
 
-Datos *Menu_inicio();
+Datos_Inicio *Menu_inicio();
 bool bit_random(double p);
 entradas_salidas *evento_random_entrada(entradas_salidas *E1, int cant_eventos);
 //char *def_evento(entradas_salidas *E_datos,int cant_eventos);
 
 int main(){
-	Datos *datos_ingreso;
+	Datos_Inicio *datos_ingreso;
 	int num_simulacion = 0,i;
 	control var_control;
 	var_control.fin = 1;
 	var_control.reposo = 0;
 	//entradas_salidas E1;
 	entradas_salidas datos_E1;
-//	entradas_salidas *E1 = (entradas_salidas*) malloc(sizeof(entradas_salidas));
-//	if(E1 == NULL){
-//		printf("Error!! No se pudo reservar memoria para la variable 'E1'");
-//		return -1;
-//	}
-	//p_E1 = &E1;
 
 	srand(time(NULL));
 	printf("----------------------- Bienvenido!! -----------------------\n");
@@ -190,29 +173,29 @@ int main(){
 		}
 		printf("--------------------------------------------------------------------------------------------------------------------------\n");
 
-		datos_ingreso = Menu_inicio();
-		//		free(datos_ingreso->n_eventos);
-		//		free(datos_ingreso->opcion);
-		//		free(datos_ingreso);
 		free(E1->ENA1);
 		free(E1->ENA2);
 		free(E1->boton);
 		free(E1->reset);
 		free(E1->t_end);
+		E1 = NULL;
 		free(E1);
-		free(Nombres->accion);
-		free(Nombres->evento);
-		free(Nombres);
+
+//		free(Nombres->accion);
+//		free(Nombres->evento);
+//		free(Nombres);
+
+		datos_ingreso = Menu_inicio();
 	}
-
 	printf("Salio del programa.\n");
-
-	getch();
+	free(datos_ingreso->n_eventos);
+	free(datos_ingreso->opcion); //Se le está pasando un entero
+	free(datos_ingreso);
 	return 0;
 }
 
-Datos* Menu_inicio(){
-	Datos *datos_ingreso = (Datos*) malloc(sizeof(Datos));
+Datos_Inicio* Menu_inicio(){
+	Datos_Inicio *datos_ingreso = (Datos_Inicio*) malloc(sizeof(Datos_Inicio));
 	if(datos_ingreso == NULL){
 		printf("Error!! No se pudo reservar memoria para la variable 'datos_ingreso'");
 		return NULL;
