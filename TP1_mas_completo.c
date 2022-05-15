@@ -1,3 +1,14 @@
+/*
+ * TP1.c
+ *
+ *  Created on: 12 may. 2022
+ *      Author: gusty
+ */
+/*
+ *AVANCES: Integre lo que estuvo haciendo Vale y ya podemos generar los vectores aleatorios sin dramas
+ *segun la cantidad que diga el usuario. Lo que tendriamos que hacer ahora es empezar a armar el arbol de if
+ *para que decida que hacer en cada caso según las entradas que se generaron. Tambien fui armando como quedaría
+ *la salida una vez que se procesan los datos.*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,7 +29,7 @@
 typedef struct{
 	char opcion;
 	int n_eventos;
-}Datos_Inicio;
+}Datos_inicio;
 
 typedef struct{
 	bool *boton;
@@ -48,31 +59,31 @@ char* Eventos[] = {"Imposible",
 				   "Relevante",
 				   "No modifica"};
 
-Datos_Inicio *Menu_inicio();
+Datos_inicio *Menu_inicio();
 bool bit_random(double p);
 entradas_salidas *evento_random_entrada(entradas_salidas *E1, int cant_eventos);
-//char *def_evento(entradas_salidas *E_datos,int cant_eventos);
+void Mostrar_salida();
 
 int main(){
-	Datos_Inicio *datos_ingreso;
+	Datos_inicio *datos_ingreso;
 	int num_simulacion = 0,i;
 	control var_control;
 	var_control.fin = 1;
 	var_control.reposo = 0;
-	//entradas_salidas E1;
 	entradas_salidas datos_E1;
 
 	srand(time(NULL));
 	printf("----------------------- Bienvenido!! -----------------------\n");
 	datos_ingreso = Menu_inicio();
-	datos Nombres[datos_ingreso->n_eventos];
+	entradas_salidas *E1 = (entradas_salidas*) malloc(sizeof(entradas_salidas));
+	if(E1 == NULL){
+		printf("Error!! No se pudo reservar memoria para la variable 'E1'");
+		return -1;
+	}
 
 	while(datos_ingreso->opcion == 'S' || datos_ingreso->opcion == 's'){
-		entradas_salidas *E1 = (entradas_salidas*) malloc(sizeof(entradas_salidas));
-		if(E1 == NULL){
-			printf("Error!! No se pudo reservar memoria para la variable 'E1'");
-			return -1;
-		}
+		datos Nombres[datos_ingreso->n_eventos];
+		E1 = &datos_E1;
 		printf("Se realiza una nueva simulacion.\n");
 		E1 = evento_random_entrada(&datos_E1,datos_ingreso->n_eventos);
 		num_simulacion++;
@@ -157,9 +168,9 @@ int main(){
 
 		printf("\n////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////\n");
 		printf("Resultados de simulacion %d:\n",num_simulacion);
-		printf("-------------------------------------------------------------------------------------------------------------------------\n");
+		printf("---------------------------------------------------------------------------------------------------------------------------------\n");
 		printf("   RESET\t    BOTON\t Se termino el tiempo?\t ENA1\tENA2\t Para el estado actual el evento \t Accion\n");
-		printf("-------------------------------------------------------------------------------------------------------------------------\n");
+		printf("---------------------------------------------------------------------------------------------------------------------------------\n");
 		for(i = 0;i<datos_ingreso->n_eventos;i++){
 			printf("%*s    |\t",ANCHO_TEXTO,PULSADOR(E1->reset[i]));
 			printf("%*s    |\t",ANCHO_TEXTO,PULSADOR(!E1->boton[i]));
@@ -171,35 +182,24 @@ int main(){
 
 			printf("\n");
 		}
-		printf("--------------------------------------------------------------------------------------------------------------------------\n");
+		printf("---------------------------------------------------------------------------------------------------------------------------------\n");
 
+		datos_ingreso = Menu_inicio();
 		free(E1->ENA1);
 		free(E1->ENA2);
 		free(E1->boton);
 		free(E1->reset);
 		free(E1->t_end);
-		E1 = NULL;
 		free(E1);
+	}
 
-		datos_ingreso = Menu_inicio();
-	}
 	printf("Salio del programa.\n");
-	
-	free(datos_ingreso->n_eventos);
-	free(datos_ingreso->opcion); //Se le está pasando un entero
-	free(datos_ingreso);
-	for(int i = 0; i < datos_ingreso->n_eventos; i++){
-		free(Nombres[i].accion);
-		free(Nombres[i].evento);
-	}
-		free(Nombres);
-		
-		
+	//getch();
 	return 0;
 }
 
-Datos_Inicio* Menu_inicio(){
-	Datos_Inicio *datos_ingreso = (Datos_Inicio*) malloc(sizeof(Datos_Inicio));
+Datos_inicio* Menu_inicio(){
+	Datos_inicio *datos_ingreso = (Datos_inicio*) malloc(sizeof(Datos_inicio));
 	if(datos_ingreso == NULL){
 		printf("Error!! No se pudo reservar memoria para la variable 'datos_ingreso'");
 		return NULL;
@@ -256,11 +256,16 @@ bool bit_random (double p){
 }
 
 entradas_salidas *evento_random_entrada(entradas_salidas *E1, int cant_eventos){
-	E1->boton = (bool*) calloc(cant_eventos,sizeof(bool*));
-	E1->reset = (bool*) calloc(cant_eventos,sizeof(bool*));
-	E1->t_end = (bool*) calloc(cant_eventos,sizeof(bool*));
-	E1->ENA1 = (bool*) calloc(cant_eventos,sizeof(bool*));
-	E1->ENA2 = (bool*) calloc(cant_eventos,sizeof(bool*));
+//	free(E1->ENA1);
+//	free(E1->ENA2);
+//	free(E1->boton);
+//	free(E1->reset);
+//	free(E1->t_end);
+	E1->boton = (bool*) malloc(cant_eventos*sizeof(bool));
+	E1->reset = (bool*) malloc(cant_eventos*sizeof(bool));
+	E1->t_end = (bool*) malloc(cant_eventos*sizeof(bool));
+	E1->ENA1 = (bool*) malloc(cant_eventos*sizeof(bool));
+	E1->ENA2 = (bool*) malloc(cant_eventos*sizeof(bool));
 
 	for (int i = 0; i < cant_eventos; i++){
 		E1->boton[i] = bit_random(1);
