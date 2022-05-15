@@ -65,9 +65,9 @@ int main(){
 	srand(time(NULL));
 	printf("----------------------- Bienvenido!! -----------------------\n");
 	datos_ingreso = Menu_inicio();
+	datos Nombres[datos_ingreso->n_eventos];
 
 	while(datos_ingreso->opcion == 'S' || datos_ingreso->opcion == 's'){
-		datos Nombres[datos_ingreso->n_eventos];
 		entradas_salidas *E1 = (entradas_salidas*) malloc(sizeof(entradas_salidas));
 		if(E1 == NULL){
 			printf("Error!! No se pudo reservar memoria para la variable 'E1'");
@@ -181,16 +181,20 @@ int main(){
 		E1 = NULL;
 		free(E1);
 
-//		free(Nombres->accion);
-//		free(Nombres->evento);
-//		free(Nombres);
-
 		datos_ingreso = Menu_inicio();
 	}
 	printf("Salio del programa.\n");
+	
 	free(datos_ingreso->n_eventos);
 	free(datos_ingreso->opcion); //Se le está pasando un entero
 	free(datos_ingreso);
+	for(int i = 0; i < datos_ingreso->n_eventos; i++){
+		free(Nombres[i].accion);
+		free(Nombres[i].evento);
+	}
+		free(Nombres);
+		
+		
 	return 0;
 }
 
