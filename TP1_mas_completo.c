@@ -44,46 +44,49 @@ typedef struct{
 	unsigned char fin:1;
 }control;
 
-char Acciones[][LONG_MAX] = {"Reset",
- 	 	 	 	             "Turno jugador 1",
- 	 	 	 	             "Turno jugador 2",
- 	 	 	 	             "Tiempo agotado",
- 	 	 	 	             "--------------"};
+typedef struct{
+	char *evento;
+	char *accion;
+}datos;
 
-char Eventos[][LONG_MAX] = {"Imposible",
-				            "Relevante",
-				            "No hay cambios"};
+char* Acciones[] = {"Reset",
+ 	 	 	 	    "Turno jugador 1",
+ 	 	 	 	    "Turno jugador 2",
+ 	 	 	 	    "Tiempo agotado",
+ 	 	 	 	    "--------------"};
+
+char* Eventos[] = {"Imposible",
+				   "Relevante",
+				   "No modifica"};
 
 Datos *Menu_inicio();
 bool bit_random(double p);
 entradas_salidas *evento_random_entrada(entradas_salidas *E1, int cant_eventos);
-//char *def_evento(entradas_salidas *E_datos,int indice);
-
-//void Mostrar_salida();
+//char *def_evento(entradas_salidas *E_datos,int cant_eventos);
 
 int main(){
 	Datos *datos_ingreso;
 	int num_simulacion = 0,i;
-	char **cadena_evento, **cadena_accion;
 	control var_control;
 	var_control.fin = 1;
 	var_control.reposo = 0;
+	//entradas_salidas E1;
+	entradas_salidas datos_E1;
 	entradas_salidas *E1 = (entradas_salidas*) malloc(sizeof(entradas_salidas));
 	if(E1 == NULL){
 		printf("Error!! No se pudo reservar memoria para la variable 'E1'");
 		return -1;
 	}
+	//p_E1 = &E1;
 
 	srand(time(NULL));
 	printf("----------------------- Bienvenido!! -----------------------\n");
 	datos_ingreso = Menu_inicio();
-//	Prueba de valores
-//	printf("La opcion elegida es: %s\n",datos_ingreso->opcion);
-//	printf("Cantidad de eventos de la simulacion: %d\n",datos_ingreso->n_eventos);
+	datos Nombres[datos_ingreso->n_eventos];
+
 	while(datos_ingreso->opcion == 'S' || datos_ingreso->opcion == 's'){
 		printf("Se realiza una nueva simulacion.\n");
-		E1 = evento_random_entrada(E1,datos_ingreso->n_eventos);
-		//cadena_evento = def_evento(E1,datos_ingreso->n_eventos);
+		E1 = evento_random_entrada(&datos_E1,datos_ingreso->n_eventos);
 		num_simulacion++;
 
 		//Logica
@@ -94,8 +97,8 @@ int main(){
 				E1->ENA1[i] = false;
 				E1->ENA2[i] = false;
 				var_control.reposo = 1;
-				cadena_evento[i] = Eventos[0];
-				cadena_accion[i] = Acciones[0];
+				Nombres[i].evento = Eventos[1];
+				Nombres[i].accion = Acciones[0];
 			}
 
 			else{
@@ -104,6 +107,12 @@ int main(){
 					E1->ENA1[i] = false;
 					E1->ENA2[i] = false;
 					var_control.reposo = 0;
+					Nombres[i].accion = Acciones[3];
+					Nombres[i].evento = Eventos[1];
+					if(i == 0){
+						Nombres[i].evento = Eventos[0];
+						Nombres[i].accion = Acciones[4];
+					}
 				}
 
 				else{
@@ -112,21 +121,29 @@ int main(){
 							E1->ENA1[i] = true;
 							E1->ENA2[i] = false;
 							var_control.fin = 0;
+							Nombres[i].accion = Acciones[1];
+							Nombres[i].evento = Eventos[1];
 						}
 						else{
 							if(!E1->boton[i] && E1->ENA1[i-1]){
 								E1->ENA2[i] = true;
 								E1->ENA1[i] = false;
+								Nombres[i].accion = Acciones[2];
+								Nombres[i].evento = Eventos[1];
 							}
 							else{
 								if(!E1->boton[i] && E1->ENA2[i-1]){
 									E1->ENA1[i] = true;
 									E1->ENA2[i] = false;
+									Nombres[i].accion = Acciones[1];
+									Nombres[i].evento = Eventos[1];
 								}
 
 								else{
 									E1->ENA1[i] = E1->ENA1[i-1];
 									E1->ENA2[i] = E1->ENA2[i-1];
+									Nombres[i].accion = Acciones[4];
+									Nombres[i].evento = Eventos[2];
 								}
 							}
 						}
@@ -136,23 +153,25 @@ int main(){
 						if(!E1->boton[i] && (i == 0)){
 							E1->ENA1[i] = true;
 							E1->ENA2[i] = false;
+							Nombres[i].accion = Acciones[1];
+							Nombres[i].evento = Eventos[1];
 						}
 						else{
 							E1->ENA1[i] = false;
 							E1->ENA2[i] = false;
+							Nombres[i].accion = Acciones[4];
+							Nombres[i].evento = Eventos[2];
 						}
 					}
 				}
 			}
 		}
 
-		//
+		//printf("%s",Nombres[i].accion);
 		printf("\n////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////\n");
-
-		//Tendriamos que armar todo en una funcio Mostrar_salida();
 		printf("Resultados de simulacion %d:\n",num_simulacion);
 		printf("-------------------------------------------------------------------------------------------------------------------------\n");
-		printf("   RESET\t    BOTON\t Se termino el tiempo?\t ENA1\tENA2\t Para el estado actual el evento es\t Accion\n");
+		printf("   RESET\t    BOTON\t Se termino el tiempo?\t ENA1\tENA2\t Para el estado actual el evento \t Accion\n");
 		printf("-------------------------------------------------------------------------------------------------------------------------\n");
 		for(i = 0;i<datos_ingreso->n_eventos;i++){
 			printf("%*s    |\t",ANCHO_TEXTO,PULSADOR(E1->reset[i]));
@@ -160,12 +179,27 @@ int main(){
 			printf("%*s\t\t|",-ANCHO_TEXTO+2,TIEMPO(E1->t_end[i]));
 			printf("%*d  |",3,E1->ENA1[i]);
 			printf("%*d  |",3,E1->ENA2[i]);
-			printf("%s",cadena_evento);
+			printf("\t%*s \t\t|",-ANCHO_TEXTO*2,Nombres[i].evento);
+			printf("\t%*s \t\t",ANCHO_TEXTO*2,Nombres[i].accion);
 
 			printf("\n");
 		}
 		printf("--------------------------------------------------------------------------------------------------------------------------\n");
 
+
+		//		free(datos_ingreso->n_eventos);
+		//		free(datos_ingreso->opcion);
+		//		free(datos_ingreso);
+//		free(E1->ENA1);
+//		free(E1->ENA2);
+//		free(E1->boton);
+//		free(E1->reset);
+//		free(E1->t_end);
+//		free(E1);
+//		for(i=0;datos_ingreso->n_eventos;i++){
+//			Nombres[i].accion = "";
+//			Nombres[i].evento = "";
+//		}
 		datos_ingreso = Menu_inicio();
 	}
 
@@ -221,27 +255,18 @@ Datos* Menu_inicio(){
 	return datos_ingreso;
 }
 
-//void Mostrar_salida(){}
-
 bool bit_random (double p){
 	int valor_random = rand() % MAX + MIN;
 	bool bit;
-	//printf("Valor aleatorio: %d  ",valor_random);
-	if(valor_random > 20/p){
+	if(valor_random > 20/p)
 		bit = true;
-		//printf("TRUE\n");
-	}
-	else{
+	else
 		bit = false;
-		//printf("FALSE\n");
-	}
 
 	return bit;
 }
 
 entradas_salidas *evento_random_entrada(entradas_salidas *E1, int cant_eventos){
-	// Generar un vector dinámico de valores booleanos
-	// para cada una de las variables de entrada.
 	E1->boton = (bool*) calloc(cant_eventos,sizeof(bool*));
 	E1->reset = (bool*) calloc(cant_eventos,sizeof(bool*));
 	E1->t_end = (bool*) calloc(cant_eventos,sizeof(bool*));
@@ -255,22 +280,3 @@ entradas_salidas *evento_random_entrada(entradas_salidas *E1, int cant_eventos){
 	}
 	return E1;
 }
-
-/*char *def_evento(entradas_salidas *E_datos,int indice){
-	//int i;
-	char *c_eventos;
-
-	if(E_datos->reset[indice] && E_datos->t_end)
-		c_eventos = Eventos[0];
-	else{
-		if(E_datos->reset[indice] && !E_datos->t_end)
-			c_eventos = Eventos[1];
-		else{
-			if(E_datos->reset[indice] && !E_datos->boton)
-
-		}
-	}
-
-
-	return c_eventos;
-}*/
