@@ -72,19 +72,24 @@ int main(){
 	var_control.reposo = 0;
 	//entradas_salidas E1;
 	entradas_salidas datos_E1;
-	entradas_salidas *E1 = (entradas_salidas*) malloc(sizeof(entradas_salidas));
-	if(E1 == NULL){
-		printf("Error!! No se pudo reservar memoria para la variable 'E1'");
-		return -1;
-	}
+//	entradas_salidas *E1 = (entradas_salidas*) malloc(sizeof(entradas_salidas));
+//	if(E1 == NULL){
+//		printf("Error!! No se pudo reservar memoria para la variable 'E1'");
+//		return -1;
+//	}
 	//p_E1 = &E1;
 
 	srand(time(NULL));
 	printf("----------------------- Bienvenido!! -----------------------\n");
 	datos_ingreso = Menu_inicio();
-	datos Nombres[datos_ingreso->n_eventos];
 
 	while(datos_ingreso->opcion == 'S' || datos_ingreso->opcion == 's'){
+		datos Nombres[datos_ingreso->n_eventos];
+		entradas_salidas *E1 = (entradas_salidas*) malloc(sizeof(entradas_salidas));
+		if(E1 == NULL){
+			printf("Error!! No se pudo reservar memoria para la variable 'E1'");
+			return -1;
+		}
 		printf("Se realiza una nueva simulacion.\n");
 		E1 = evento_random_entrada(&datos_E1,datos_ingreso->n_eventos);
 		num_simulacion++;
@@ -167,7 +172,6 @@ int main(){
 			}
 		}
 
-		//printf("%s",Nombres[i].accion);
 		printf("\n////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////\n");
 		printf("Resultados de simulacion %d:\n",num_simulacion);
 		printf("-------------------------------------------------------------------------------------------------------------------------\n");
@@ -186,21 +190,19 @@ int main(){
 		}
 		printf("--------------------------------------------------------------------------------------------------------------------------\n");
 
-
+		datos_ingreso = Menu_inicio();
 		//		free(datos_ingreso->n_eventos);
 		//		free(datos_ingreso->opcion);
 		//		free(datos_ingreso);
-//		free(E1->ENA1);
-//		free(E1->ENA2);
-//		free(E1->boton);
-//		free(E1->reset);
-//		free(E1->t_end);
-//		free(E1);
-//		for(i=0;datos_ingreso->n_eventos;i++){
-//			Nombres[i].accion = "";
-//			Nombres[i].evento = "";
-//		}
-		datos_ingreso = Menu_inicio();
+		free(E1->ENA1);
+		free(E1->ENA2);
+		free(E1->boton);
+		free(E1->reset);
+		free(E1->t_end);
+		free(E1);
+		free(Nombres->accion);
+		free(Nombres->evento);
+		free(Nombres);
 	}
 
 	printf("Salio del programa.\n");
