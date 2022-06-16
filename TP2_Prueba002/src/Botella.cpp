@@ -1,18 +1,21 @@
-/*
- * Botella.cpp
- *
- *  Created on: 16 jun. 2022
- *      Author: valentin
- */
-
 #include "Botella.h"
+using namespace std;
+#include <stdlib.h>
+#include <time.h>
+#include <iostream>
 
-Botella::Botella() {
-	// TODO Auto-generated constructor stub
+bool Botella::getTapado(int numero){
+
+	return 0;
+}
+bool Botella::getllenado(int numero){
+	return 0;
+}
+void Botella::logica(){
+
 
 }
+
 
 Botella::~Botella() {
-	// TODO Auto-generated destructor stub
 }
-
