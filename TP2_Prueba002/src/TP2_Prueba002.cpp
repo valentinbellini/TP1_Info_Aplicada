@@ -1,14 +1,11 @@
-/*
- * main.cpp
- *
- *  Created on: 16 jun. 2022
- *      Author: gusty
- */
-
 #include <iostream>
 #include <array>
 #include <stdio.h>
 #include <stdlib.h>
+#include "Botella.h"
+using std::cout;
+using std::cin;
+using std::endl;
 
 #define EVENT_MAX 100
 
@@ -19,16 +16,29 @@ typedef struct{																	 //
 
 Datos_inicio *Menu_inicio();
 
-using std::cout;
-using std::cin;
-using std::endl;
+
+typedef struct entradas{
+	bool X = 0;
+	bool Y = 0;
+}entradas;
+
+bool bit_random(double p);
 
 int main(){
+
+	Botella botella1;
+
 	//int num_simulacion = 0;
 	Datos_inicio *datos_ingreso;
 
 	cout<<"----------------------- Bienvenido!! -----------------------"<<endl;
 	datos_ingreso = Menu_inicio();
+	int cant_eventos = datos_ingreso->n_eventos;
+	entradas vector[cant_eventos];
+	for(int i = 0; i < cant_eventos; i++){
+		vector[i].X = bit_random(0.55);
+		vector[i].Y = bit_random(0.55);
+	}
 
 	return 0;
 }
@@ -79,4 +89,15 @@ Datos_inicio* Menu_inicio(){
 	}
 
 	return datos_ingreso;
+}
+
+bool bit_random (double p){														 //
+
+	int valor_random = rand() %2;
+	bool bit;
+
+	if(valor_random > 20/p) bit = true;
+	else bit = false;
+
+	return bit;
 }
