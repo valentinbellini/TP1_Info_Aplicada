@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <array>
 #include <stdio.h>
@@ -17,16 +18,12 @@ typedef struct{																	 //
 Datos_inicio *Menu_inicio();
 
 
-typedef struct entradas{
-	bool X = 0;
-	bool Y = 0;
-}entradas;
-
 bool bit_random(double p);
 
 int main(){
 
-	Botella botella1;
+	Botella botella;
+
 
 	//int num_simulacion = 0;
 	Datos_inicio *datos_ingreso;
@@ -34,11 +31,13 @@ int main(){
 	cout<<"----------------------- Bienvenido!! -----------------------"<<endl;
 	datos_ingreso = Menu_inicio();
 	int cant_eventos = datos_ingreso->n_eventos;
-	entradas vector[cant_eventos];
+	entradas *vector[cant_eventos];
 	for(int i = 0; i < cant_eventos; i++){
-		vector[i].X = bit_random(0.55);
-		vector[i].Y = bit_random(0.55);
+		vector[i]->X = bit_random(0.55);
+		vector[i]->Y = bit_random(0.55);
 	}
+
+	botella.logica(vector[cant_eventos]);
 
 	return 0;
 }
