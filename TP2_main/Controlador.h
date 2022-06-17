@@ -26,10 +26,7 @@ private:
 public:
 	Controlador(int);
 	void logica();
-	bool getTapada(int i){return Y_tapado[i];}
-	bool getLlena(int i){return X_llenado[i];}
-	void setTapada(bool);
-	void setLlena(bool);
+	void mostrar(int);
 	virtual ~Controlador();
 };
 
