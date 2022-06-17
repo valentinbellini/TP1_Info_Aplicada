@@ -7,9 +7,29 @@
 
 #include "Controlador.h"
 #include <iostream>
+#include <time.h>
+#include <vector>
+
+#define ANCHO_TEXTO -5
+#define CONVERTIR(a) ( (a) ? "SI" : "NO" )
 
 using std::cout;
 using std::endl;
+using std::vector;
+
+vector<string>Acciones = {"Llenando",
+						  "Tapando",
+						  "Llenando y tapando",
+						  "Cinta en movimiento",
+						  "No se puede llenar",
+						  "No se puede tapar",
+						  "Tapado y llenando",
+						  "Lleno y tapando",
+						  "Llenando, error al tapar"};
+
+vector<string>Eventos = {"Imposible",
+		    			 "Relevante",
+						 "No modifica"};
 
 Controlador::Controlador(int cant_simulaciones){
 	int i;
@@ -18,6 +38,9 @@ Controlador::Controlador(int cant_simulaciones){
 	SAL_A = new bool[cant_simulaciones];
 	SAL_B = new bool[cant_simulaciones];
 	SAL_C = new bool[cant_simulaciones];
+	accion = new string[cant_simulaciones];
+	evento = new string[cant_simulaciones];
+	srand(time(NULL));
 
 	for(i = 0;i<cant_simulaciones;i++){
 		int valor_random_1 = rand() % 2;
@@ -40,11 +63,13 @@ Controlador::~Controlador(){
 	delete []SAL_A;
 	delete []SAL_B;
 	delete []SAL_C;
+	delete []accion;
+	delete []evento;
 }
-void Controlador::logica(){
+void Controlador::logica(int n_eventos){
 	int i;
 
-	for(i=0;i<10;i++){
+	for(i=0;i<n_eventos;i++){
 		if(!i){
 			if(!Y_tapado[i]){
 				if(X_llenado[i]){
@@ -52,19 +77,25 @@ void Controlador::logica(){
 					SAL_A[i] = true;
 					SAL_B[i] = false;
 					SAL_C[i] = false;
+					accion[i].assign(Acciones[1]);
+					evento[i].assign(Eventos[0]);
 				}
 				else{
 					//Se esta moviendo la cinta
 					SAL_A[i] = false;
 					SAL_B[i] = false;
 					SAL_C[i] = true;
+					accion[i].assign(Acciones[1]);
+					evento[i].assign(Eventos[0]);
 				}
 			}
 			else{
 				//No se puede tapar (Suceso imposible)
-				SAL_A[i] = false;
-				SAL_B[i] = false;
-				SAL_C[i] = false;
+				SAL_A[i] = SAL_A[i-1];
+				SAL_B[i] = SAL_B[i-1];
+				SAL_C[i] = SAL_C[i-1];
+				accion[i].assign(Acciones[1]);
+				evento[i].assign(Eventos[0]);
 			}
 		}
 
@@ -74,6 +105,8 @@ void Controlador::logica(){
 				SAL_A[i] = false;
 				SAL_B[i] = false;
 				SAL_C[i] = true;
+				accion[i].assign(Acciones[1]);
+				evento[i].assign(Eventos[0]);
 			}
 
 			else{
@@ -84,6 +117,8 @@ void Controlador::logica(){
 						SAL_A[i] = true;
 						SAL_B[i] = false;
 						SAL_C[i] = false;
+						accion[i].assign(Acciones[1]);
+						evento[i].assign(Eventos[0]);
 					}
 
 					else{
@@ -92,6 +127,8 @@ void Controlador::logica(){
 							SAL_A[i] = SAL_A[i-1];
 							SAL_B[i] = SAL_B[i-1];
 							SAL_C[i] = SAL_C[i-1];
+							accion[i].assign(Acciones[1]);
+							evento[i].assign(Eventos[0]);
 						}
 					}
 				}
@@ -103,6 +140,8 @@ void Controlador::logica(){
 							SAL_A[i] = false;
 							SAL_B[i] = true;
 							SAL_C[i] = false;
+							accion[i].assign(Acciones[1]);
+							evento[i].assign(Eventos[0]);
 						}
 
 						else{
@@ -111,6 +150,8 @@ void Controlador::logica(){
 								SAL_A[i] = SAL_A[i-1];
 								SAL_B[i] = SAL_B[i-1];
 								SAL_C[i] = SAL_C[i-1];
+								accion[i].assign(Acciones[1]);
+								evento[i].assign(Eventos[0]);
 							}
 						}
 					}
@@ -121,6 +162,8 @@ void Controlador::logica(){
 							SAL_A[i] = true;
 							SAL_B[i] = false;
 							SAL_C[i] = false;
+							accion[i].assign(Acciones[1]);
+							evento[i].assign(Eventos[0]);
 						}
 
 						else{
@@ -130,6 +173,8 @@ void Controlador::logica(){
 									SAL_A[i] = true;
 									SAL_B[i] = true;
 									SAL_C[i] = false;
+									accion[i].assign(Acciones[1]);
+									evento[i].assign(Eventos[0]);
 								}
 							}
 
@@ -138,6 +183,8 @@ void Controlador::logica(){
 								SAL_A[i] = SAL_A[i-1];
 								SAL_B[i] = SAL_B[i-1];
 								SAL_C[i] = SAL_C[i-1];
+								accion[i].assign(Acciones[1]);
+								evento[i].assign(Eventos[0]);
 							}
 						}
 					}
@@ -147,11 +194,20 @@ void Controlador::logica(){
 	}
 }
 
-void Controlador::mostrar(int n_sim){
+void Controlador::mostrar(int n_eventos){
 	int i;
-	cout<<"////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////"<<endl;
-	for(i=0;i<10;i++){
-		cout<<"Resultados de simulacion Nº:"<<n_sim<<endl;
-		cout<<X_llenado[i]<<"	"<<Y_tapado[i]<<"	"<<SAL_A[i]<<"	 "<<SAL_B[i]<<"	  "<<SAL_C[i]<<endl;
+	cout<<"--------------------------------------------------------------------------------------------------------------------------------------------------"<<endl;
+	printf("   BOTELLA X\t BOTELLA Y\t LLENADO(A)\t TAPADO(B)\t CINTA(C)\t Para el estado actual el evento \t Accion\n");
+	cout<<"--------------------------------------------------------------------------------------------------------------------------------------------------"<<endl;
+	for(i=0;i<n_eventos;i++){
+		//cout<<"        "<<X_llenado[i]<<"        "<<Y_tapado[i]<<"        "<<SAL_A[i]<<"        "<<SAL_B[i]<<"        "<<SAL_C[i]<<"        "<<evento[i]<<"        "<<accion[i]<<endl;
+		printf("       %*s  |",ANCHO_TEXTO,CONVERTIR(X_llenado[i]));
+		printf("       %*s  |",ANCHO_TEXTO,CONVERTIR(Y_tapado[i]));
+		printf("       %*s   |",ANCHO_TEXTO,CONVERTIR(SAL_A[i]));
+		printf("       %*s   |",ANCHO_TEXTO,CONVERTIR(SAL_B[i]));
+		printf("       %*s   |",ANCHO_TEXTO,CONVERTIR(SAL_C[i]));
+//		printf("\t%*s \t\t",ANCHO_TEXTO*2,evento[i]);
+//		printf("\t%*s \t\t",ANCHO_TEXTO*2,accion[i]);
+		printf("\n");
 	}
 }
