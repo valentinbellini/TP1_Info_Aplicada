@@ -6,24 +6,13 @@
  */
 
 #include <iostream>
-#include <array>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>																 //
 #include <stdbool.h>
-#include <vector>
 #include "Controlador.h"
 
 #define EVENT_MAX 100
-
-string Acciones[] = {"Llenando",
- 	 	 	 	     "Tapando",
- 	 	 	 	     "Llenando y tapando",
- 	 	 	 	     "Cinta en movimiento"};
-
-string Eventos[] = {"Imposible",
-				    "Relevante",
-				    "No modifica"};
 
 typedef struct{																	 //
 	char opcion;																 //
@@ -36,25 +25,25 @@ using namespace std;
 using std::cout;
 using std::cin;
 using std::endl;
-using std::array;
 
 int main(){
 	int num_simulacion = 0;
-	srand(time(NULL));
 	Datos_inicio *datos_ingreso;
 
 	cout<<"----------------------- Bienvenido!! -----------------------"<<endl;
 	datos_ingreso = Menu_inicio();
-	int cant_eventos = datos_ingreso->n_eventos;
-	Controlador driver(cant_eventos);
-//	for(i = 0; i < cant_eventos; i++){
-//		cout<<"Valor de X:"<<driver.getLlena(i)<<" Valor de Y:"<<driver.getTapada(i)<<endl;
-//	}
-	driver.logica();
-	driver.mostrar(num_simulacion);
-//	for(i = 0;i<cant_eventos;i++){
-//		cout<<"Evento : "<<i<<" "<<driver.getEstado()<<" "<<driver.getEvento()<<endl;
-//	}
+	while(datos_ingreso->opcion == 'S' || datos_ingreso->opcion == 's'){
+		Controlador driver(datos_ingreso->n_eventos);
+		num_simulacion++;
+		driver.logica(datos_ingreso->n_eventos);
+		cout<<endl;
+		cout<<"////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////"<<endl;
+		cout<<"Resultados de simulacion:"<<num_simulacion<<endl;
+		driver.mostrar(datos_ingreso->n_eventos);
+		datos_ingreso = Menu_inicio();
+	}
+
+	cout<<"Salio del programa."<<endl;
 
 	return 0;
 }
