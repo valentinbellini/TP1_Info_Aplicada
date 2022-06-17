@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <time.h>																 //
 #include <stdbool.h>
-#include <array>
+#include <vector>
 #include "Controlador.h"
 
 #define EVENT_MAX 100
@@ -39,19 +39,19 @@ using std::endl;
 using std::array;
 
 int main(){
-	//int num_simulacion = 0;
+	int num_simulacion = 0;
 	srand(time(NULL));
 	Datos_inicio *datos_ingreso;
-	int i;
 
 	cout<<"----------------------- Bienvenido!! -----------------------"<<endl;
 	datos_ingreso = Menu_inicio();
 	int cant_eventos = datos_ingreso->n_eventos;
 	Controlador driver(cant_eventos);
-	for(i = 0; i < cant_eventos; i++){
-		cout<<"Valor de X:"<<driver.getLlena(i)<<" Valor de Y:"<<driver.getTapada(i)<<endl;
-	}
-
+//	for(i = 0; i < cant_eventos; i++){
+//		cout<<"Valor de X:"<<driver.getLlena(i)<<" Valor de Y:"<<driver.getTapada(i)<<endl;
+//	}
+	driver.logica();
+	driver.mostrar(num_simulacion);
 //	for(i = 0;i<cant_eventos;i++){
 //		cout<<"Evento : "<<i<<" "<<driver.getEstado()<<" "<<driver.getEvento()<<endl;
 //	}
