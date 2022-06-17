@@ -22,10 +22,12 @@ private:
 	bool *SAL_A;
 	bool *SAL_B;
 	bool *SAL_C;
+	string *accion;
+	string *evento;
 
 public:
 	Controlador(int);
-	void logica();
+	void logica(int);
 	void mostrar(int);
 	virtual ~Controlador();
 };
