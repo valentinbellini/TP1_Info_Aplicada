@@ -1,10 +1,3 @@
-/*
- * Controlador.cpp
- *
- *  Created on: 17 jun. 2022
- *      Author: gusty
- */
-
 #include "Controlador.h"
 #include <iostream>
 #include <time.h>
@@ -66,7 +59,7 @@ Controlador::~Controlador(){
 }
 void Controlador::logica(int n_eventos){
 	int i;
-
+	int flag = 0;
 	for(i=0;i<n_eventos;i++){
 		if(!i){
 			if(!Y_tapado[i]){
@@ -105,6 +98,9 @@ void Controlador::logica(int n_eventos){
 				SAL_C[i] = true;
 				accion[i].assign(Acciones[3]);
 				evento[i].assign(Eventos[1]);
+				if(SAL_A[i-1]){
+					flag = 1;
+				}
 			}
 
 			else{
@@ -149,6 +145,12 @@ void Controlador::logica(int n_eventos){
 							SAL_C[i] = false;
 							accion[i].assign(Acciones[5]);
 							evento[i].assign(Eventos[0]);
+							if(!SAL_A[i-1] && flag){
+								SAL_B[i] = true;
+								flag = false;
+								accion[i].assign(Acciones[1]);
+								evento[i].assign(Eventos[1]);
+							}
 						}
 					}
 
@@ -180,6 +182,12 @@ void Controlador::logica(int n_eventos){
 									SAL_C[i] = false;
 									accion[i].assign(Acciones[5]);
 									evento[i].assign(Eventos[0]);
+									if(!SAL_A[i-1] && flag){
+										SAL_B[i] = true;
+										flag = false;
+										accion[i].assign(Acciones[1]);
+										evento[i].assign(Eventos[1]);
+									}
 								}
 							}
 						}
@@ -206,4 +214,6 @@ void Controlador::mostrar(int n_eventos){
 		cout<<"		    |  "<<accion[i];
 		printf("\n");
 	}
+	cout<<"//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////"<<endl;
+	cout<<endl;
 }
