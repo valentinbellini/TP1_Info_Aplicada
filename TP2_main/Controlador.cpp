@@ -22,10 +22,7 @@ vector<string>Acciones = {"Llenando",
 						  "Llenando y tapando",
 						  "Cinta en movimiento",
 						  "No se puede llenar",
-						  "No se puede tapar",
-						  "Tapado y llenando",
-						  "Lleno y tapando",
-						  "Llenando, error al tapar"};
+						  "No se puede tapar"};
 
 vector<string>Eventos = {"Imposible",
 		    			 "Relevante",
@@ -65,6 +62,7 @@ Controlador::~Controlador(){
 	delete []SAL_C;
 	delete []accion;
 	delete []evento;
+	cout<<"Limpiando memoria..."<<endl;
 }
 void Controlador::logica(int n_eventos){
 	int i;
@@ -77,24 +75,24 @@ void Controlador::logica(int n_eventos){
 					SAL_A[i] = true;
 					SAL_B[i] = false;
 					SAL_C[i] = false;
-					accion[i].assign(Acciones[1]);
-					evento[i].assign(Eventos[0]);
+					accion[i].assign(Acciones[0]);
+					evento[i].assign(Eventos[1]);
 				}
 				else{
 					//Se esta moviendo la cinta
 					SAL_A[i] = false;
 					SAL_B[i] = false;
 					SAL_C[i] = true;
-					accion[i].assign(Acciones[1]);
-					evento[i].assign(Eventos[0]);
+					accion[i].assign(Acciones[3]);
+					evento[i].assign(Eventos[1]);
 				}
 			}
 			else{
 				//No se puede tapar (Suceso imposible)
-				SAL_A[i] = SAL_A[i-1];
-				SAL_B[i] = SAL_B[i-1];
-				SAL_C[i] = SAL_C[i-1];
-				accion[i].assign(Acciones[1]);
+				SAL_A[i] = false;
+				SAL_B[i] = false;
+				SAL_C[i] = false;
+				accion[i].assign(Acciones[5]);
 				evento[i].assign(Eventos[0]);
 			}
 		}
@@ -105,29 +103,29 @@ void Controlador::logica(int n_eventos){
 				SAL_A[i] = false;
 				SAL_B[i] = false;
 				SAL_C[i] = true;
-				accion[i].assign(Acciones[1]);
-				evento[i].assign(Eventos[0]);
+				accion[i].assign(Acciones[3]);
+				evento[i].assign(Eventos[1]);
 			}
 
 			else{
 				if(!Y_tapado[i] && X_llenado[i]){
-					if(!Y_tapado[i-1] || (Y_tapado[i-1] && X_llenado[i-1])){
+					if(!SAL_B[i-1] || (SAL_B[i-1] && SAL_A[i-1])){
 						//Se esta llenando (se sigue llenando)
 						//Se termino de tapar (2da condicion)
 						SAL_A[i] = true;
 						SAL_B[i] = false;
 						SAL_C[i] = false;
-						accion[i].assign(Acciones[1]);
-						evento[i].assign(Eventos[0]);
+						accion[i].assign(Acciones[0]);
+						evento[i].assign(Eventos[1]);
 					}
 
 					else{
-						if(Y_tapado[i-1] && !X_llenado[i-1]){
+						if(SAL_B[i-1] && !SAL_A[i-1]){
 							//No se puede llenar(suceso imposible)
 							SAL_A[i] = SAL_A[i-1];
 							SAL_B[i] = SAL_B[i-1];
-							SAL_C[i] = SAL_C[i-1];
-							accion[i].assign(Acciones[1]);
+							SAL_C[i] = false;
+							accion[i].assign(Acciones[4]);
 							evento[i].assign(Eventos[0]);
 						}
 					}
@@ -135,56 +133,54 @@ void Controlador::logica(int n_eventos){
 
 				else{
 					if(Y_tapado[i] && !X_llenado[i]){
-						if(!X_llenado[i-1]){
+						if(SAL_B[i-1]){
 							//se esta tapando (o se sigue tapando)
 							SAL_A[i] = false;
 							SAL_B[i] = true;
 							SAL_C[i] = false;
 							accion[i].assign(Acciones[1]);
-							evento[i].assign(Eventos[0]);
+							evento[i].assign(Eventos[1]);
 						}
 
 						else{
-							if(!Y_tapado[i-1] && X_llenado[i-1]){
-								//No se puede tapar(suceso imposible)
-								SAL_A[i] = SAL_A[i-1];
-								SAL_B[i] = SAL_B[i-1];
-								SAL_C[i] = SAL_C[i-1];
-								accion[i].assign(Acciones[1]);
-								evento[i].assign(Eventos[0]);
-							}
+							//No se puede tapar(suceso imposible)
+							SAL_A[i] = SAL_A[i-1];
+							SAL_B[i] = SAL_B[i-1];
+							SAL_C[i] = false;
+							accion[i].assign(Acciones[5]);
+							evento[i].assign(Eventos[0]);
 						}
 					}
 
 					else{
-						if(Y_tapado[i-1] && X_llenado[i-1]){
-							//Se sigue tapando y se termino de llenar
-							SAL_A[i] = true;
-							SAL_B[i] = false;
-							SAL_C[i] = false;
-							accion[i].assign(Acciones[1]);
-							evento[i].assign(Eventos[0]);
-						}
-
-						else{
-							if(Y_tapado[i] && X_llenado[i]){
-								if(Y_tapado[i-1] == X_llenado[i-1]){
-									//Se esta tapando y llenando
-									SAL_A[i] = true;
-									SAL_B[i] = true;
-									SAL_C[i] = false;
-									accion[i].assign(Acciones[1]);
-									evento[i].assign(Eventos[0]);
-								}
+						if(Y_tapado[i] && X_llenado[i]){
+							if(SAL_B[i-1] && SAL_A[i-1]){
+								//Se esta tapando y llenando
+								SAL_A[i] = true;
+								SAL_B[i] = true;
+								SAL_C[i] = false;
+								accion[i].assign(Acciones[2]);
+								evento[i].assign(Eventos[1]);
 							}
 
 							else{
-								//No se puede tapar o llenar
-								SAL_A[i] = SAL_A[i-1];
-								SAL_B[i] = SAL_B[i-1];
-								SAL_C[i] = SAL_C[i-1];
-								accion[i].assign(Acciones[1]);
-								evento[i].assign(Eventos[0]);
+								if(!SAL_A[i] && SAL_B[i]){
+									//No se puede llenar
+									SAL_A[i] = SAL_A[i-1];
+									SAL_B[i] = SAL_B[i-1];
+									SAL_C[i] = false;
+									accion[i].assign(Acciones[4]);
+									evento[i].assign(Eventos[0]);
+								}
+
+								else{
+									//No se puede tapar
+									SAL_A[i] = SAL_A[i-1];
+									SAL_B[i] = SAL_B[i-1];
+									SAL_C[i] = false;
+									accion[i].assign(Acciones[5]);
+									evento[i].assign(Eventos[0]);
+								}
 							}
 						}
 					}
@@ -196,9 +192,9 @@ void Controlador::logica(int n_eventos){
 
 void Controlador::mostrar(int n_eventos){
 	int i;
-	cout<<"--------------------------------------------------------------------------------------------------------------------------------------------------"<<endl;
-	printf("   BOTELLA X\t BOTELLA Y\t LLENADO(A)\t TAPADO(B)\t CINTA(C)\t Para el estado actual el evento \t Accion\n");
-	cout<<"--------------------------------------------------------------------------------------------------------------------------------------------------"<<endl;
+	cout<<"----------------------------------------------------------------------------------------------------------------------------------------------"<<endl;
+	printf("   BOTELLA X\t BOTELLA Y\t LLENADO(A)\t TAPADO(B)\t CINTA(C)\t Para el estado actual el evento \t    Accion\n");
+	cout<<"----------------------------------------------------------------------------------------------------------------------------------------------"<<endl;
 	for(i=0;i<n_eventos;i++){
 		//cout<<"        "<<X_llenado[i]<<"        "<<Y_tapado[i]<<"        "<<SAL_A[i]<<"        "<<SAL_B[i]<<"        "<<SAL_C[i]<<"        "<<evento[i]<<"        "<<accion[i]<<endl;
 		printf("       %*s  |",ANCHO_TEXTO,CONVERTIR(X_llenado[i]));
@@ -206,8 +202,8 @@ void Controlador::mostrar(int n_eventos){
 		printf("       %*s   |",ANCHO_TEXTO,CONVERTIR(SAL_A[i]));
 		printf("       %*s   |",ANCHO_TEXTO,CONVERTIR(SAL_B[i]));
 		printf("       %*s   |",ANCHO_TEXTO,CONVERTIR(SAL_C[i]));
-//		printf("\t%*s \t\t",ANCHO_TEXTO*2,evento[i]);
-//		printf("\t%*s \t\t",ANCHO_TEXTO*2,accion[i]);
+		cout<<"		    "<<evento[i];
+		cout<<"		    |  "<<accion[i];
 		printf("\n");
 	}
 }
