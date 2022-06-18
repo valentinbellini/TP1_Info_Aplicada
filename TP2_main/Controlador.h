@@ -1,19 +1,17 @@
-/*
- * Controlador.h
- *
- *  Created on: 17 jun. 2022
- *      Author: gusty
- */
-
 #ifndef CONTROLADOR_H_
 #define CONTROLADOR_H_
 
-#define MAX 50																	 //
-#define MIN 1
-#define p 0.55
-
 #include <string>
 using namespace std;
+
+/*#define MAX 50
+#define MIN 1
+#define p 0.55*/
+
+typedef struct{
+	int opcion;
+	int n_eventos;
+}Datos_inicio;
 
 class Controlador{
 private:
@@ -24,13 +22,16 @@ private:
 	bool *SAL_C;
 	string *accion;
 	string *evento;
+	Datos_inicio inicio;
 
 public:
-	Controlador(int);
-	void logica(int);
+	Controlador(){};
+	void Menu_inicio(int);
+	int  Get_opcion() {return inicio.opcion;}
+	void Set_valores();
+	void logica();
 	void mostrar(int);
 	virtual ~Controlador();
 };
 
 #endif /* CONTROLADOR_H_ */
-
