@@ -8,15 +8,15 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>																 //
+#include <time.h>
 #include <stdbool.h>
 #include "Controlador.h"
 
 #define EVENT_MAX 100
 
-typedef struct{																	 //
-	char opcion;																 //
-	int n_eventos;																 //
+typedef struct{
+	char opcion;
+	int n_eventos;
 }Datos_inicio;
 
 Datos_inicio *Menu_inicio();
@@ -37,12 +37,14 @@ int main(){
 		num_simulacion++;
 		driver.logica(datos_ingreso->n_eventos);
 		cout<<endl;
-		cout<<"////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////"<<endl;
+		cout<<"//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////"<<endl;
 		cout<<"Resultados de simulacion:"<<num_simulacion<<endl;
 		driver.mostrar(datos_ingreso->n_eventos);
+		cout<<"//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////"<<endl;
+		cout<<endl;
+		driver.~Controlador();
 		datos_ingreso = Menu_inicio();
 	}
-
 	cout<<"Salio del programa."<<endl;
 
 	return 0;
