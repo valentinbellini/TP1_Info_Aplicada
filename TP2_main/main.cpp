@@ -1,31 +1,28 @@
-#include "Controlador.h"
 
-/*#include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <stdbool.h>
 
-using namespace std;
-using std::cout;
-using std::cin;
-using std::endl;*/
+/////////////    ARCHIVO DE CABECERA    //////////////
+#include "Controlador.h"							//
+//////////////////////////////////////////////////////
 
-int main() {
-	int sim = 0;
 
-		while(1) {
-			sim++;
-			Controlador driver;
-			driver.Menu_inicio(sim);
+///////////////   PROGRAMA PRINCIPAL   ///////////////
+int main() {										//
+	int sim = 0;									//
+													//
+		while(1) {									//
+			sim++;									//
+			Controlador driver;						//
+			driver.Menu_Inicio(sim);				//
+													//
+			if(driver.Get_Opcion() == 1) {			//
+				driver.Set_Valores();				//
+				driver.Logica();					//
+				driver.Mostrar(sim);				//
+			}										//
+			else break;								//
+		}											//
+													//
+	return 0;										//
+}													//
+//////////////////////////////////////////////////////
 
-			if(driver.Get_opcion() == 1) {
-				driver.Set_valores();
-				driver.logica();
-				driver.mostrar(sim);
-			}
-			else break;
-		}
-
-	return 0;
-}
