@@ -1,38 +1,48 @@
-#include "Controlador.h"
-#include <iostream>
-#include <vector>
 
-#define EVENT_MAX 100
-#define ANCHO_TEXTO -5
-#define CONVERTIR(a) ( (a) ? "SI" : "NO" )
 
-/*#include <time.h>
-using std::cout;
-using std::endl;
-using std::vector;*/
+////////////////////     LIBRERIAS    ////////////////////
+#include "Controlador.h"								//
+#include <iostream>										//
+#include <vector>										//
+#include <stdlib.h>										//
+#include <time.h>										//
+using namespace std;									//
+//////////////////////////////////////////////////////////
 
-vector<string>Acciones = {"Llenando",
-						  "Tapando",
-						  "Llenando y tapando",
-						  "Cinta en movimiento",
-						  "No se puede llenar",
-						  "No se puede tapar"};
 
-vector<string>Eventos = {"Imposible",
-		    			 "Relevante"};
+//////////////    DEFINICIONES Y MACROS    ///////////////
+#define EVENT_MAX 100									//
+#define ANCHO_TEXTO -5									//
+#define CONVERTIR(a) ( (a) ? "SI" : "NO" )				//
+//////////////////////////////////////////////////////////
 
-void Controlador::Menu_inicio(int n) {
+
+////////////////////     ARREGLOS     ////////////////////
+vector<string>Acciones = {"Llenando",					//
+						  "Tapando",					//
+						  "Llenando y tapando",			//
+						  "Cinta en movimiento",		//
+						  "No se puede llenar",			//
+						  "No se puede tapar"};			//
+														//
+vector<string>Eventos = {"Imposible",					//
+		    			 "Relevante"};					//
+//////////////////////////////////////////////////////////
+
+
+/////////////////    FUNCIONES MIEMBRO    ////////////////
+void Controlador::Menu_Inicio(int n) {					//
 	int opcion;
 	inicio.n_eventos = 0;
 	if(n == 1) cout<<endl<<"-------------------- Bienvenido!! --------------------"<<endl<<endl;
 	cout<<"Elige una de las siguientes opciones:"<<endl;
-	cout<<"1 - Ralizar una simulación."<<endl;
+	cout<<"1 - Realizar una simulación."<<endl;
 	cout<<"2 - Salir del programa."<<endl<<endl;
 	cout<<"Pulsa 1 para simular o 2 para salir del programa:  ";
 	cin>>opcion;
 
 	while((opcion != 1) && (opcion != 2)){
-		cout<<"Debes ingresar el numero de alguna de las opciones del menu:  ";
+		cout<<"Debes ingresar el número de alguna de las opciones del menu:  ";
 		cin>>opcion;
 	}
 	inicio.opcion = opcion;
@@ -43,7 +53,7 @@ void Controlador::Menu_inicio(int n) {
 
 		while((inicio.n_eventos <= 0) || (inicio.n_eventos > EVENT_MAX)){
 			if(inicio.n_eventos <= 0){
-				cout<<"Opcion invalida. La cantidad de eventos a simular debe ser un numero positivo:  ";
+				cout<<"Opción inválida. La cantidad de eventos a simular debe ser un número positivo:  ";
 				cin>>inicio.n_eventos;
 			}
 
@@ -54,12 +64,12 @@ void Controlador::Menu_inicio(int n) {
 				}
 			}
 		}
-		cout<<"Cantidad de eventos de la simulacion: "<<inicio.n_eventos<<endl;
+		cout<<"Cantidad de eventos de la simulación: "<<inicio.n_eventos<<endl;
 	}
-	else cout<<"Salio del programa."<<endl;
+	else cout<<"Fin del programa."<<endl;
 }
-
-void Controlador::Set_valores() {
+														//
+void Controlador::Set_Valores() {						//
 	int i, n  = inicio.n_eventos;
 
 	X_llenado = new bool[n];
@@ -86,8 +96,8 @@ void Controlador::Set_valores() {
 		SAL_C[i] = 0;
 	}
 }
-
-void Controlador::logica() {
+														//
+void Controlador::Logica() {							//
 	int i,
 		flag = 0,
 		n = inicio.n_eventos;
@@ -233,14 +243,14 @@ void Controlador::logica() {
 		}
 	}
 }
-
-void Controlador::mostrar(int sim){
+														//
+void Controlador::Mostrar(int sim){						//
 	int i, n = inicio.n_eventos;
 	cout<<endl;
 	cout<<"//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////"<<endl;
-	cout<<"Resultados de simulacion:  "<<sim<<endl;
+	cout<<"Resultados de la simulación:  "<<sim<<endl;
 	cout<<"------------------------------------------------------------------------------------------------------------------------------"<<endl;
-	printf(" CONTROL LLENAR | CONTROL TAPAR | LLENADO(A) | TAPADO(B) | CINTA(C) | Para el estado actual el evento |        Accion\n");
+	printf(" CONTROL LLENAR | CONTROL TAPAR | LLENADO(A) | TAPADO(B) | CINTA(C) | Para el estado actual el evento |        Acción\n");
 	cout<<"------------------------------------------------------------------------------------------------------------------------------"<<endl;
 	for(i = 0; i < n; i++){
 		printf("       %*s    |",ANCHO_TEXTO,CONVERTIR(X_llenado[i]));
@@ -255,14 +265,18 @@ void Controlador::mostrar(int sim){
 	cout<<"//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////"<<endl;
 	cout<<endl;
 }
-
-Controlador::~Controlador(){
-	delete []X_llenado;
-	delete []Y_tapado;
-	delete []SAL_A;
-	delete []SAL_B;
-	delete []SAL_C;
-	delete []accion;
-	delete []evento;
-	cout<<"Limpiando memoria..."<<endl<<endl;
+														//
+Controlador::~Controlador(){							//
+	if(inicio.opcion == 1) {
+		delete []X_llenado;
+		delete []Y_tapado;
+		delete []SAL_A;
+		delete []SAL_B;
+		delete []SAL_C;
+		delete []accion;
+		delete []evento;
+		cout<<"Liberando memoria..."<<endl<<endl;
+	}
 }
+//////////////////////////////////////////////////////////
+
